@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Todo List</title>
+</head>
+<body>
+<h1>Todo List</h1>
+<ul>
+    <li th:each="todo : ${todos}">
+        <span th:text="${todo.description}"></span>
+        <form th:action="@{/todos/delete/{id}(id=${todo.id})}" method="post">
+            <button type="submit">Delete</button>
+        </form>
+        <form th:action="@{/todos/update/{id}(id=${todo.id})}" method="post">
+            <input type="hidden" name="starred" th:value="${todo.starred ? false : true}"/>
+            <button type="submit" th:text="${todo.completed ? 'Mark Incomplete' : 'Mark Complete'}"></button>
+        </form>
+        <form th:action="@{/todos/update/{id}(id=${todo.id})}" method="post">
+            <input type="hidden" name="starred" th:value="${todo.starred ? false : true}"/>
+            <button type="submit" th:text="${todo.starred ? 'Unstar' : 'Star'}"></button>
+        </form>
+    </li>
+</ul>
+<form th:action="@{/todos}" method="post">
+    <input type="text" name="description" placeholder="Enter todo description" required/>
+    <button type="submit">Add Todo</button>
+</form>
+</body>
+</html>
