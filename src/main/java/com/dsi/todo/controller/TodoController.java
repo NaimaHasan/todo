@@ -9,9 +9,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+
 
 @Controller()
 @RequestMapping(value = "/todos")
@@ -39,8 +41,11 @@ public class TodoController {
 
     @PostMapping
     public String createTodo(@ModelAttribute TodoCreateDto todoCreateDto) {
-        Date today = new Date();
-        Todo newTodo = new Todo(todoCreateDto.getTitle(), todoCreateDto.getDescription(), todoCreateDto.getPriority(), todoCreateDto.getStatus(), today.toString(), today.toString());
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String formattedDate = now.format(formatter);
+        Todo newTodo = new Todo(todoCreateDto.getTitle(), todoCreateDto.getDescription(), todoCreateDto.getPriority(), todoCreateDto.getStatus(), formattedDate,
+                formattedDate);
         todoService.save(newTodo);
         return "redirect:/todos";
     }
@@ -51,19 +56,20 @@ public class TodoController {
         if (optionalTodo.isEmpty()) {
             return "error";
         }
-        
+
         Todo todo = optionalTodo.get();
         todo.setDescription(todoUpdateDto.getDescription());
         todo.setTitle(todoUpdateDto.getTitle());
         todo.setPriority(todoUpdateDto.getPriority());
         todo.setStatus(todoUpdateDto.getStatus());
-        todo.setUpdatedAt(new Date().toString());
+        // Convert the date to a human-readable format
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String formattedDate = LocalDateTime.now().format(formatter);
+        todo.setUpdatedAt(formattedDate);
 
         todoService.save(todo);
 
         return "redirect:/todos";
-
-
     }
 
 
