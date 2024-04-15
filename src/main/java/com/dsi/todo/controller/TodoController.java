@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,7 +39,8 @@ public class TodoController {
 
     @PostMapping
     public String createTodo(@ModelAttribute TodoCreateDto todoCreateDto) {
-        Todo newTodo = new Todo(false, false, todoCreateDto.getDescription());
+        Date today = new Date();
+        Todo newTodo = new Todo(todoCreateDto.getTitle(), todoCreateDto.getDescription(), todoCreateDto.getPriority(), todoCreateDto.getStatus(), today.toString(), today.toString());
         todoService.save(newTodo);
         return "redirect:/todos";
     }
@@ -49,37 +51,19 @@ public class TodoController {
         if (optionalTodo.isEmpty()) {
             return "error";
         }
+        
         Todo todo = optionalTodo.get();
-        todo.setStarred(todoUpdateDto.getStarred());
-        todo.setCompleted(todoUpdateDto.getCompleted());
         todo.setDescription(todoUpdateDto.getDescription());
+        todo.setTitle(todoUpdateDto.getTitle());
+        todo.setPriority(todoUpdateDto.getPriority());
+        todo.setStatus(todoUpdateDto.getStatus());
+        todo.setUpdatedAt(new Date().toString());
 
         todoService.save(todo);
 
         return "redirect:/todos";
 
 
-    }
-
-    @PostMapping("/update/{id}")
-    public String patchTodoById(@PathVariable("id") Long id, @ModelAttribute TodoUpdateDto todoUpdateDto) {
-        Optional<Todo> optionalTodo = todoService.findById(id);
-        if (optionalTodo.isEmpty()) {
-            return "error";
-        }
-
-        Todo todo = optionalTodo.get();
-        if (todoUpdateDto.getStarred() != null) {
-            todo.setStarred(todoUpdateDto.getStarred());
-        }
-        if (todoUpdateDto.getCompleted() != null) {
-            todo.setCompleted(todoUpdateDto.getCompleted());
-        }
-        if (todoUpdateDto.getDescription() != null) {
-            todo.setDescription(todoUpdateDto.getDescription());
-        }
-        todoService.save(todo);
-        return "redirect:/todos";
     }
 
 
@@ -95,3 +79,5 @@ public class TodoController {
 
         todoService.delete(todo);
         return "redirect:/todos";
+    }
+}
