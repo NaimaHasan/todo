@@ -102,3 +102,8 @@ button[type="edit"]:hover {
     cursor: pointer;
 }
 
+.empty-text{
+    font-size: 32px;
+    left: 40%;
+}
+
